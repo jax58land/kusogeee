@@ -377,6 +377,8 @@ export class PhaseController {
       this.fx.spawnBloodDrip();
       this.fx.enableHorrorFlicker(true);
       this.fx.moveButtonRandom();
+      // BGM途切れ演出開始（mild）
+      this.fx.startBGMGlitch('mild');
 
     } else if (clickCount === 51) {
       // ===== ギミック7: ボタンが分裂 + 本物移動 =====
@@ -655,6 +657,9 @@ export class PhaseController {
       // ===== 崩壊 + 最恐ホラー（強化版） =====
       this.ai.setMood('broken');
 
+      // BGM途切れをheavyに
+      if (clickCount === 80) this.fx.startBGMGlitch('heavy');
+
       // ボタンは毎回ランダム位置に
       this.fx.moveButtonRandom();
 
@@ -807,6 +812,7 @@ export class PhaseController {
     this.fx.setButtonHorror(false);
     this.fx.resetButtonPosition();
     this.fx.stopButtonOrbit();
+    this.fx.stopBGMGlitch();
     this.fx.stopButtonBlink();
 
     const reportLines = [

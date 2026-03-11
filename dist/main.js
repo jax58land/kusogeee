@@ -382,6 +382,8 @@
       this.horrorFlicker = null;
       this.bgm = null;
       this.randomFontPerChar = false;
+      // BGM途切れ演出（ミュート/アンミュートを繰り返す。再生位置はそのまま）
+      this.bgmGlitchId = null;
       // ボタン円軌道移動
       this.orbitId = null;
       this.orbitAngle = 0;
@@ -411,6 +413,30 @@
       this.bgm.volume = 0.5;
       this.bgm.play().catch(() => {
       });
+    }
+    startBGMGlitch(intensity = "mild") {
+      this.stopBGMGlitch();
+      if (!this.bgm) return;
+      const minOn = intensity === "heavy" ? 200 : 500;
+      const maxOn = intensity === "heavy" ? 800 : 2e3;
+      const minOff = intensity === "heavy" ? 100 : 200;
+      const maxOff = intensity === "heavy" ? 600 : 800;
+      const toggle = () => {
+        if (!this.bgm) return;
+        this.bgm.muted = !this.bgm.muted;
+        const min = this.bgm.muted ? minOff : minOn;
+        const max = this.bgm.muted ? maxOff : maxOn;
+        const next = min + Math.random() * (max - min);
+        this.bgmGlitchId = setTimeout(toggle, next);
+      };
+      toggle();
+    }
+    stopBGMGlitch() {
+      if (this.bgmGlitchId) {
+        clearTimeout(this.bgmGlitchId);
+        this.bgmGlitchId = null;
+      }
+      if (this.bgm) this.bgm.muted = false;
     }
     // ===== メッセージ =====
     showMessage(text, color = "#fff", speed = 30, fontClass) {
@@ -1290,6 +1316,7 @@
         this.fx.spawnBloodDrip();
         this.fx.enableHorrorFlicker(true);
         this.fx.moveButtonRandom();
+        this.fx.startBGMGlitch("mild");
       } else if (clickCount === 51) {
         this.ai.setMood("horror");
         this.fx.showMessage("\u4FFA\u304C...\u5897\u3048\u305F...\uFF1F", "#660000", typeSpeed);
@@ -1523,6 +1550,7 @@
         this.fx.moveButtonRandom();
       } else if (clickCount >= 80 && clickCount <= 89) {
         this.ai.setMood("broken");
+        if (clickCount === 80) this.fx.startBGMGlitch("heavy");
         this.fx.moveButtonRandom();
         this.fx.glitch(300 + (clickCount - 80) * 50);
         if (clickCount % 2 === 0) this.fx.invertScreen(100 + (clickCount - 80) * 20);
@@ -1650,6 +1678,7 @@
       this.fx.setButtonHorror(false);
       this.fx.resetButtonPosition();
       this.fx.stopButtonOrbit();
+      this.fx.stopBGMGlitch();
       this.fx.stopButtonBlink();
       const reportLines = [
         "\u2500\u2500 AI\u6700\u7D42\u30EC\u30DD\u30FC\u30C8 \u2500\u2500",

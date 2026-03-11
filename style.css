@@ -6,7 +6,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
 
 /* ===== Reset & Base ===== */
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+html { touch-action: manipulation; }
 
 :root {
   --color-bg: #0a0a0a;

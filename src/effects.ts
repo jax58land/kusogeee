@@ -42,6 +42,32 @@ export class EffectsEngine {
     this.bgm.play().catch(() => {});
   }
 
+  // BGM途切れ演出（ミュート/アンミュートを繰り返す。再生位置はそのまま）
+  private bgmGlitchId: ReturnType<typeof setInterval> | null = null;
+  startBGMGlitch(intensity: 'mild' | 'heavy' = 'mild'): void {
+    this.stopBGMGlitch();
+    if (!this.bgm) return;
+    const minOn = intensity === 'heavy' ? 200 : 500;
+    const maxOn = intensity === 'heavy' ? 800 : 2000;
+    const minOff = intensity === 'heavy' ? 100 : 200;
+    const maxOff = intensity === 'heavy' ? 600 : 800;
+
+    const toggle = () => {
+      if (!this.bgm) return;
+      this.bgm.muted = !this.bgm.muted;
+      const min = this.bgm.muted ? minOff : minOn;
+      const max = this.bgm.muted ? maxOff : maxOn;
+      const next = min + Math.random() * (max - min);
+      this.bgmGlitchId = setTimeout(toggle, next) as unknown as ReturnType<typeof setInterval>;
+    };
+    toggle();
+  }
+
+  stopBGMGlitch(): void {
+    if (this.bgmGlitchId) { clearTimeout(this.bgmGlitchId as unknown as number); this.bgmGlitchId = null; }
+    if (this.bgm) this.bgm.muted = false;
+  }
+
   // ===== メッセージ =====
 
   showMessage(text: string, color = '#fff', speed = 30, fontClass?: string): void {
