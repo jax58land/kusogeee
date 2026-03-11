@@ -1,0 +1,658 @@
+/* ===== Horror Fonts (3種) ===== */
+@font-face { font-family: 'ComicLight'; src: url('fonts/g_comickoin_freeL.ttf') format('truetype'); }
+@font-face { font-family: 'RoundKana'; src: url('fonts/g_roundkana.ttf') format('truetype'); }
+@font-face { font-family: 'Onryou'; src: url('fonts/onryou.TTF') format('truetype'); }
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+/* ===== Reset & Base ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
+
+:root {
+  --color-bg: #0a0a0a;
+  --color-danger: #ff4444;
+  --color-danger-deep: #990000;
+  --color-ai: #00ff88;
+  --color-warn: #ffaa00;
+  --color-text: #ffffff;
+  --color-muted: #888888;
+  --color-dim: #444444;
+  --color-panel-bg: rgba(0, 20, 10, 0.85);
+  --color-horror: #8b0000;
+  --color-blood: #660000;
+  --button-size: 220px;
+  --button-glow: rgba(255, 0, 0, 0.4);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Noto Sans JP', sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+  transition: background 0.5s, filter 0.3s;
+}
+
+body.inverted { filter: invert(1); }
+body.horror-bg { background: #0a0000; }
+body.deep-horror { background: #050000; }
+
+/* ===== Horror Font Classes (3種) ===== */
+.font-comic-light { font-family: 'ComicLight', 'Noto Sans JP', sans-serif; }
+.font-round { font-family: 'RoundKana', 'Noto Sans JP', sans-serif; }
+.font-onryou { font-family: 'Onryou', 'Noto Sans JP', sans-serif; }
+
+/* ===== Warning ===== */
+#warning {
+  font-size: 1.2rem;
+  color: var(--color-danger);
+  margin-bottom: 30px;
+  text-align: center;
+  line-height: 1.8;
+  opacity: 1;
+  transition: all 0.5s;
+}
+.warning-icon { font-size: 1.4rem; }
+.warning-main { font-size: 2rem; font-weight: 900; display: block; margin-top: 4px; }
+
+/* ===== The Button ===== */
+#button-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#the-button {
+  width: var(--button-size);
+  height: var(--button-size);
+  border-radius: 50%;
+  border: 4px solid #ff0000;
+  background: radial-gradient(circle at 35% 35%, #ff3333, var(--color-danger-deep));
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 900;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 40px var(--button-glow), inset 0 -4px 8px rgba(0,0,0,0.3);
+  letter-spacing: 2px;
+  z-index: 10;
+  font-family: inherit;
+}
+#the-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 60px rgba(255, 0, 0, 0.6), inset 0 -4px 8px rgba(0,0,0,0.3);
+}
+#the-button:active { transform: scale(0.95); }
+#the-button.fleeing { transition: all 0.15s ease-out; }
+#the-button.friendly {
+  background: radial-gradient(circle at 35% 35%, #33ff33, #009900);
+  border-color: #00ff00;
+  box-shadow: 0 0 40px rgba(0, 255, 0, 0.4);
+}
+#the-button.dead {
+  background: radial-gradient(circle at 35% 35%, #333, #111);
+  border-color: #333;
+  box-shadow: 0 0 10px rgba(100, 100, 100, 0.2);
+  color: #666;
+}
+#the-button.horror-pulse {
+  animation: horror-pulse 1.5s ease-in-out infinite;
+  border-color: var(--color-horror);
+  box-shadow: 0 0 60px rgba(139, 0, 0, 0.6);
+}
+
+#button-aura {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ===== Messages ===== */
+#message {
+  margin-top: 40px;
+  font-size: 1.5rem;
+  min-height: 60px;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.6;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#message.visible { opacity: 1; }
+
+#sub-message {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--color-dim);
+  font-family: monospace;
+  text-align: center;
+  min-height: 24px;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+#sub-message.visible { opacity: 1; }
+
+/* ===== Counter ===== */
+#counter {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 0.9rem;
+  color: #555;
+  transition: all 0.5s;
+  font-family: monospace;
+}
+
+/* ===== AI Panel ===== */
+#ai-panel {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 0.75rem;
+  font-family: monospace;
+  max-width: 280px;
+  line-height: 1.8;
+  opacity: 0;
+  transition: opacity 0.5s;
+  background: var(--color-panel-bg);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  backdrop-filter: blur(4px);
+}
+#ai-panel.visible { opacity: 1; }
+#ai-panel.horror-panel {
+  background: rgba(20, 0, 0, 0.9);
+  border-color: rgba(139, 0, 0, 0.4);
+}
+
+#ai-panel-header {
+  color: var(--color-ai);
+  font-weight: bold;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+#ai-panel-body .row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+#ai-panel-body .label { color: var(--color-muted); }
+#ai-panel-body .value { color: var(--color-ai); }
+#ai-panel-body .value.danger { color: var(--color-danger); }
+#ai-panel-body .value.warn { color: var(--color-warn); }
+
+#ai-graph {
+  margin-top: 8px;
+  width: 100%;
+  height: 60px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ===== Plea Bubble ===== */
+#plea-bubble {
+  position: absolute;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  color: #ccc;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  top: -55px;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  z-index: 11;
+}
+#plea-bubble.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+#plea-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #1a1a1a;
+}
+
+/* ===== Particles ===== */
+.particle {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 5;
+}
+.text-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 15;
+  font-size: 0.7rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* ===== Emotion ===== */
+#emotion {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: var(--color-dim);
+  font-family: monospace;
+  transition: all 0.5s;
+}
+
+/* ===== Noise Overlay ===== */
+#noise {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255,255,255,0.03) 0px,
+    rgba(255,255,255,0.03) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  transition: opacity 0.5s;
+}
+
+/* ===== Speed Meter ===== */
+#speed-meter {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 0.7rem;
+  color: #333;
+  font-family: monospace;
+  text-align: right;
+  line-height: 1.6;
+}
+
+/* ===== Blackout ===== */
+#blackout {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #000;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s;
+}
+#blackout.active { opacity: 1; pointer-events: all; }
+
+#blackout-text {
+  font-size: 1.1rem;
+  color: var(--color-ai);
+  font-family: monospace;
+  text-align: left;
+  line-height: 2;
+  max-width: 500px;
+}
+#blackout-text.horror-text {
+  color: var(--color-horror);
+  font-family: 'Onryou', monospace;
+}
+
+#analysis-bar {
+  width: 300px;
+  height: 4px;
+  background: #222;
+  margin-top: 20px;
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+}
+#analysis-bar .fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-ai), var(--color-warn));
+  transition: width 0.3s;
+}
+#analysis-bar.visible { display: block; }
+
+/* ===== Final Screen ===== */
+#final-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #000;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  padding: 20px;
+  cursor: default;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+#final-screen.active { display: flex; }
+
+#final-message {
+  font-size: 1.2rem;
+  text-align: center;
+  line-height: 1.8;
+  color: var(--color-text);
+  max-width: 600px;
+  padding: 40px 0 60px;
+  flex-shrink: 0;
+}
+
+/* ===== Secret Ending Screen ===== */
+#secret-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #000;
+  z-index: 250;
+  display: none;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#secret-screen.active { display: flex; }
+
+#secret-message {
+  font-size: 1.2rem;
+  text-align: center;
+  line-height: 2.2;
+  color: var(--color-text);
+  max-width: 600px;
+  padding: 40px 0 60px;
+  flex-shrink: 0;
+}
+
+/* ===== Name Input Overlay ===== */
+#name-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.95);
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+#name-overlay.active { display: flex; }
+
+#name-prompt {
+  color: var(--color-ai);
+  font-family: monospace;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#name-input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-ai);
+  color: #fff;
+  font-size: 1.5rem;
+  font-family: inherit;
+  text-align: center;
+  padding: 8px 16px;
+  outline: none;
+  width: 250px;
+  caret-color: var(--color-ai);
+  -webkit-user-select: text;
+  user-select: text;
+}
+#name-input::placeholder { color: #333; }
+
+#name-submit {
+  margin-top: 20px;
+  padding: 10px 30px;
+  background: none;
+  border: 1px solid var(--color-ai);
+  color: var(--color-ai);
+  font-family: monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+#name-submit:hover { background: rgba(0,255,136,0.1); }
+
+/* ===== Ranking Screen ===== */
+#ranking-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.97);
+  z-index: 310;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+#ranking-overlay.active { display: flex; }
+
+#ranking-title {
+  color: var(--color-ai);
+  font-family: 'HorrorComic', monospace;
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+}
+
+#ranking-list {
+  font-family: monospace;
+  font-size: 0.9rem;
+  line-height: 2.2;
+  color: #ccc;
+  text-align: left;
+  min-width: 300px;
+}
+#ranking-list .rank-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+#ranking-list .rank-row.current { color: var(--color-ai); font-weight: bold; }
+#ranking-list .rank-num { color: var(--color-warn); width: 30px; }
+#ranking-list .rank-name { flex: 1; margin: 0 10px; }
+#ranking-list .rank-score { color: var(--color-muted); }
+
+#ranking-close {
+  margin-top: 30px;
+  padding: 10px 30px;
+  background: none;
+  border: 1px solid #333;
+  color: #666;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+#ranking-close:hover { border-color: var(--color-ai); color: var(--color-ai); }
+
+/* ===== Achievement Popup ===== */
+#achievement-popup {
+  position: fixed;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-panel-bg);
+  border: 1px solid var(--color-ai);
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 0.85rem;
+  color: var(--color-ai);
+  font-family: monospace;
+  z-index: 300;
+  transition: top 0.5s ease-out;
+  white-space: nowrap;
+}
+#achievement-popup.show { top: 60px; }
+
+/* ===== Cursor Trail ===== */
+.trail-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-ai);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0.5;
+}
+
+/* ===== Horror Overlay (血の滴り等) ===== */
+#horror-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 49;
+  opacity: 0;
+  transition: opacity 1s;
+}
+#horror-overlay.active { opacity: 1; }
+
+.blood-drip {
+  position: fixed;
+  top: -20px;
+  width: 3px;
+  background: linear-gradient(to bottom, transparent, var(--color-horror), var(--color-blood));
+  pointer-events: none;
+  z-index: 49;
+  border-radius: 0 0 3px 3px;
+}
+
+/* ===== Horror Flicker ===== */
+.horror-flicker {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 48;
+  background: rgba(139, 0, 0, 0.03);
+  animation: flicker 0.1s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0; }
+  5% { opacity: 1; }
+  10% { opacity: 0; }
+  15% { opacity: 0.8; }
+  20% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* ===== Subliminal Flash ===== */
+#subliminal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  background: #000;
+  font-family: 'Onryou', sans-serif;
+  font-size: 5rem;
+  color: var(--color-horror);
+}
+
+/* ===== Animations ===== */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-8px) rotate(-1deg); }
+  20% { transform: translateX(8px) rotate(1deg); }
+  30% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  50% { transform: translateX(-4px); }
+  60% { transform: translateX(4px); }
+  70% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+.shake { animation: shake 0.5s ease-in-out; }
+.shake-hard { animation: shake 0.3s ease-in-out 3; }
+
+@keyframes glitch {
+  0% { clip-path: inset(40% 0 61% 0); transform: translate(-2px, 2px); }
+  20% { clip-path: inset(92% 0 1% 0); transform: translate(1px, -1px); }
+  40% { clip-path: inset(43% 0 1% 0); transform: translate(-1px, 3px); }
+  60% { clip-path: inset(25% 0 58% 0); transform: translate(3px, 1px); }
+  80% { clip-path: inset(54% 0 7% 0); transform: translate(-3px, -2px); }
+  100% { clip-path: inset(58% 0 43% 0); transform: translate(2px, -3px); }
+}
+.glitch {
+  animation: glitch 0.3s linear infinite;
+  text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+}
+
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 40px var(--button-glow); }
+  50% { box-shadow: 0 0 80px rgba(255, 0, 0, 0.8); }
+}
+.pulse-red { animation: pulse-red 0.5s ease-in-out 3; }
+
+@keyframes horror-pulse {
+  0%, 100% { box-shadow: 0 0 40px rgba(139, 0, 0, 0.3); }
+  50% { box-shadow: 0 0 80px rgba(139, 0, 0, 0.8), 0 0 120px rgba(139, 0, 0, 0.3); }
+}
+
+@keyframes scanline {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+.scanline-effect::before {
+  content: '';
+  position: fixed;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(139, 0, 0, 0.2);
+  z-index: 51;
+  animation: scanline 3s linear infinite;
+}
+
+@keyframes vignette-pulse {
+  0%, 100% { box-shadow: inset 0 0 100px rgba(0,0,0,0.8); }
+  50% { box-shadow: inset 0 0 150px rgba(0,0,0,0.95); }
+}
+.vignette { animation: vignette-pulse 4s ease-in-out infinite; }
+
+/* ===== Secret ending styles ===== */
+.secret-text-line {
+  opacity: 0;
+  transition: opacity 0.8s;
+  margin: 4px 0;
+}
+.secret-text-line.visible { opacity: 1; }
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  :root { --button-size: 160px; }
+  #the-button { font-size: 1.1rem; }
+  .warning-main { font-size: 1.5rem; }
+  #message { font-size: 1.2rem; max-width: 90vw; }
+  #ai-panel { font-size: 0.65rem; max-width: 200px; padding: 8px 10px; }
+  #final-message { font-size: 1.1rem; }
+}

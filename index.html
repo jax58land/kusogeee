@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>絶対に押すな</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="warning">
+  <span class="warning-icon">&#9888;</span> 警告 <span class="warning-icon">&#9888;</span><br>
+  <span class="warning-main">絶対に押さないでください</span>
+</div>
+
+<div id="button-wrapper">
+  <div id="plea-bubble"></div>
+  <button id="the-button">押すな</button>
+  <canvas id="button-aura" width="300" height="300"></canvas>
+</div>
+
+<div id="message"></div>
+<div id="sub-message"></div>
+
+<div id="counter"></div>
+
+<div id="ai-panel">
+  <div id="ai-panel-header">[ BUTTON-AI v0.1 ]</div>
+  <div id="ai-panel-body"></div>
+  <canvas id="ai-graph" width="260" height="60"></canvas>
+</div>
+
+<div id="emotion"></div>
+<div id="speed-meter"></div>
+<div id="noise"></div>
+<div id="cursor-trail"></div>
+<div id="horror-overlay"></div>
+<div id="subliminal"></div>
+
+<div id="blackout">
+  <div id="blackout-text"></div>
+  <div id="analysis-bar"><div class="fill"></div></div>
+</div>
+
+<div id="final-screen">
+  <div id="final-message"></div>
+</div>
+
+<div id="secret-screen">
+  <div id="secret-message"></div>
+</div>
+
+<div id="name-overlay">
+  <div id="name-prompt"></div>
+  <input id="name-input" type="text" placeholder="名前" maxlength="12" autocomplete="off">
+  <button id="name-submit">記録する</button>
+</div>
+
+<div id="ranking-overlay">
+  <div id="ranking-title">RANKING</div>
+  <div id="ranking-list"></div>
+  <button id="ranking-close">閉じる</button>
+</div>
+
+<div id="achievement-popup"></div>
+
+<script src="dist/main.js"></script>
+</body>
+</html>
